@@ -14,7 +14,8 @@ module.exports = {
         new BrowserSync({
             host:'localhost',
             port: 3000,
-            server: { baseDir:[__dirname]}
+            server: { baseDir:[__dirname]},
+            browser: 'chrome'
         })
     ],
     output:{
