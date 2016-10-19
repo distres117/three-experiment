@@ -3,7 +3,7 @@ var webpack = require('webpack'),
 
 module.exports = {
     entry:[
-        './app/app.js'
+        './app/main.js'
     ],
     plugins:[
         new webpack.optimize.UglifyJsPlugin({
@@ -14,12 +14,12 @@ module.exports = {
         new BrowserSync({
             host:'localhost',
             port: 3000,
-            server: { baseDir:['public']}
+            server: { baseDir:[__dirname]}
         })
     ],
     output:{
         path: __dirname,
-        filename: './public/bundle.js'
+        filename: './bundle.js'
     },
     resolve: {
         root: __dirname,
