@@ -8,7 +8,7 @@
  */
 import THREE from './CanvasRenderer';
 
-THREE.AsciiEffect = function ( renderer, charSet, options ) {
+THREE.AsciiEffect = function ( renderer, charSet, options) {
 
 	// its fun to create one your own!
 
@@ -54,10 +54,10 @@ THREE.AsciiEffect = function ( renderer, charSet, options ) {
 	};
 
 
-	this.render = function ( scene, camera ) {
+	this.render = function ( scene, camera, className) {
 
 		renderer.render( scene, camera );
-		asciifyImage( renderer, oAscii );
+		asciifyImage( renderer, oAscii, className );
 
 	};
 
@@ -199,8 +199,8 @@ THREE.AsciiEffect = function ( renderer, charSet, options ) {
 
 	// convert img element to ascii
 
-	function asciifyImage( canvasRenderer, oAscii ) {
-
+	function asciifyImage( canvasRenderer, oAscii, className ) {
+			
 		oCtx.clearRect( 0, 0, iWidth, iHeight );
 		oCtx.drawImage( oCanvasImg, 0, 0, iWidth, iHeight );
 		var oImgData = oCtx.getImageData( 0, 0, iWidth, iHeight ).data;
@@ -271,7 +271,7 @@ THREE.AsciiEffect = function ( renderer, charSet, options ) {
 
 		}
 
-		oAscii.innerHTML = "<tr><td>" + strChars + "</td></tr>";
+		oAscii.innerHTML = "<tr class='"+className+"'><td>" + strChars + "</td></tr>";
 
 		// console.timeEnd('rendering');
 
@@ -280,6 +280,5 @@ THREE.AsciiEffect = function ( renderer, charSet, options ) {
 	}
 
 	// end modified asciifyImage block
-
 };
 export default THREE;
