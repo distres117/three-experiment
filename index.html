@@ -7,15 +7,27 @@
                 overflow: hidden;
             }
             .hover{
-                color:red;
+                color:blue;
             },
             .default{
                 color:black;
             }
+            #defaultContainer{
+                position:absolute;
+                z-index: 10;
+            }
+            #hoverContainer{
+                position:absolute;
+                z-index:1;
+            }
+
         </style>
     </head>
     <body>
-        <div id="app"></div>
+        <div id="container">
+            <div id="hoverContainer"></div>
+            <div id="defaultContainer"></div>
+        </div>
         <script src="bundle.js"></script>
     </body>
 </html>

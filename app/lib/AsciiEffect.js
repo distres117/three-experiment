@@ -52,12 +52,18 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 		initAsciiSize();
 
 	};
+	this.getRenderer = function(){
+		return renderer;
+	}
+	this.clear = function(){
+		var context = oCanvas.getContext( "2d" );
+		context.clear();
+	}
 
-
-	this.render = function ( scene, camera, className) {
-
-		renderer.render( scene, camera );
-		asciifyImage( renderer, oAscii, className );
+	this.render = function ( scene, camera, className, doRender = true) {
+		if (doRender)
+			renderer.render( scene, camera );
+		asciifyImage( renderer, oAscii, className, doRender );
 
 	};
 
@@ -199,7 +205,7 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 
 	// convert img element to ascii
 
-	function asciifyImage( canvasRenderer, oAscii, className ) {
+	function asciifyImage( canvasRenderer, oAscii, className, doRender ) {
 			
 		oCtx.clearRect( 0, 0, iWidth, iHeight );
 		oCtx.drawImage( oCanvasImg, 0, 0, iWidth, iHeight );
@@ -209,68 +215,68 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 		var strChars = "";
 
 		// console.time('rendering');
+		if (doRender){
+			for ( var y = 0; y < iHeight; y += 2 ) {
 
-		for ( var y = 0; y < iHeight; y += 2 ) {
+				for ( var x = 0; x < iWidth; x ++ ) {
 
-			for ( var x = 0; x < iWidth; x ++ ) {
+					var iOffset = ( y * iWidth + x ) * 4;
 
-				var iOffset = ( y * iWidth + x ) * 4;
+					var iRed = oImgData[ iOffset ];
+					var iGreen = oImgData[ iOffset + 1 ];
+					var iBlue = oImgData[ iOffset + 2 ];
+					var iAlpha = oImgData[ iOffset + 3 ];
+					var iCharIdx;
 
-				var iRed = oImgData[ iOffset ];
-				var iGreen = oImgData[ iOffset + 1 ];
-				var iBlue = oImgData[ iOffset + 2 ];
-				var iAlpha = oImgData[ iOffset + 3 ];
-				var iCharIdx;
+					var fBrightness;
 
-				var fBrightness;
+					fBrightness = ( 0.3 * iRed + 0.59 * iGreen + 0.11 * iBlue ) / 255;
+					// fBrightness = (0.3*iRed + 0.5*iGreen + 0.3*iBlue) / 255;
 
-				fBrightness = ( 0.3 * iRed + 0.59 * iGreen + 0.11 * iBlue ) / 255;
-				// fBrightness = (0.3*iRed + 0.5*iGreen + 0.3*iBlue) / 255;
+					if ( iAlpha == 0 ) {
 
-				if ( iAlpha == 0 ) {
+						// should calculate alpha instead, but quick hack :)
+						//fBrightness *= (iAlpha / 255);
+						fBrightness = 1;
 
-					// should calculate alpha instead, but quick hack :)
-					//fBrightness *= (iAlpha / 255);
-					fBrightness = 1;
+					}
+
+					iCharIdx = Math.floor( ( 1 - fBrightness ) * ( aCharList.length - 1 ) );
+
+					if ( bInvert ) {
+
+						iCharIdx = aCharList.length - iCharIdx - 1;
+
+					}
+
+					// good for debugging
+					//fBrightness = Math.floor(fBrightness * 10);
+					//strThisChar = fBrightness;
+
+					var strThisChar = aCharList[ iCharIdx ];
+
+					if ( strThisChar === undefined || strThisChar == " " )
+						strThisChar = "&nbsp;";
+
+					if ( bColor ) {
+
+						strChars += "<span style='"
+							+ "color:rgb(" + iRed + "," + iGreen + "," + iBlue + ");"
+							+ ( bBlock ? "background-color:rgb(" + iRed + "," + iGreen + "," + iBlue + ");" : "" )
+							+ ( bAlpha ? "opacity:" + ( iAlpha / 255 ) + ";" : "" )
+							+ "'>" + strThisChar + "</span>";
+
+					} else {
+
+						strChars += strThisChar;
+
+					}
 
 				}
-
-				iCharIdx = Math.floor( ( 1 - fBrightness ) * ( aCharList.length - 1 ) );
-
-				if ( bInvert ) {
-
-					iCharIdx = aCharList.length - iCharIdx - 1;
-
-				}
-
-				// good for debugging
-				//fBrightness = Math.floor(fBrightness * 10);
-				//strThisChar = fBrightness;
-
-				var strThisChar = aCharList[ iCharIdx ];
-
-				if ( strThisChar === undefined || strThisChar == " " )
-					strThisChar = "&nbsp;";
-
-				if ( bColor ) {
-
-					strChars += "<span style='"
-						+ "color:rgb(" + iRed + "," + iGreen + "," + iBlue + ");"
-						+ ( bBlock ? "background-color:rgb(" + iRed + "," + iGreen + "," + iBlue + ");" : "" )
-						+ ( bAlpha ? "opacity:" + ( iAlpha / 255 ) + ";" : "" )
-						+ "'>" + strThisChar + "</span>";
-
-				} else {
-
-					strChars += strThisChar;
-
-				}
+				strChars += "<br/>";
 
 			}
-			strChars += "<br/>";
-
 		}
-
 		oAscii.innerHTML = "<tr class='"+className+"'><td>" + strChars + "</td></tr>";
 
 		// console.timeEnd('rendering');
