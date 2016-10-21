@@ -4,7 +4,6 @@
         <style>
             body{
                 margin:0;
-                overflow: hidden;
             }
             .hover{
                 color:blue;
@@ -20,6 +19,18 @@
                 position:absolute;
                 z-index:1;
             }
+            #labelsContainer{
+                position: relative;
+                z-index: 20;
+            }
+            .label{
+                color: grey;
+                background:white;
+                font-size:2em;
+                font-family: 'arial';
+                font-weight:bold;
+                position: absolute;
+            }
 
         </style>
     </head>
@@ -27,6 +38,7 @@
         <div id="container">
             <div id="hoverContainer"></div>
             <div id="defaultContainer"></div>
+            <div id="labelsContainer"></div>
         </div>
         <script src="bundle.js"></script>
     </body>

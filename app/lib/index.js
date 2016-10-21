@@ -1,2 +1,2 @@
-import THREE from './TrackballControls';
+import THREE from './OrbitControls';
 export default THREE;

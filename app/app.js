@@ -13,19 +13,24 @@ export default class App{
     init(){
         this.scene = new THREE.Scene();
         this.hoverScene = new THREE.Scene();
+        this.labelScene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 1, 1000 );
         this.rayCaster = new THREE.Raycaster();
         this.camera.position.z = 500;
         this.camera.position.y = 50;
         if (this.debug)
             this.controls = new THREE.TrackballControls(this.camera);
-        //set lights
+        // //set lights
         let light = new THREE.PointLight(0xffffff);
         light.position.set(500,500,500);
         this.scene.add(light);
         this.effect = this.getRenderer('defaultContainer').effect;
         this.hoverEffect = this.getRenderer('hoverContainer').effect;
-        console.log(this.hoverEffect);
+        this.labelRenderer = new THREE.WebGLRenderer({alpha:true});
+        this.labelRenderer.setSize(window.innerWidth,window.innerHeight);
+        this.labelRenderer.setPixelRatio(window.devicePixelRatio);
+        let container = document.getElementById('labelsContainer');
+        container.appendChild(this.labelRenderer.domElement);
         //add listeners
         document.addEventListener('mousemove', this.onMouseMove.bind(this), false );
         this.render();
@@ -55,8 +60,10 @@ export default class App{
             this.flushHoverScene();
             this.intersected = undefined;
         }
+        this.objects.forEach(o=>o.updateLabel(this.camera));
         this.hoverEffect.render(this.hoverScene, this.camera, 'hover', !!this.intersected);
         this.effect.render(this.scene, this.camera, 'default' );
+        this.labelRenderer.render(this.labelScene, this.camera);
         
     }
     flushHoverScene(){
@@ -70,6 +77,8 @@ export default class App{
     add(obj){
         this.objects.push(obj);
         this.scene.add(obj.mesh);
+        obj.updateLabel(this.camera);
+        document.getElementById('labelsContainer').appendChild(obj.label.element);
         
     }
     onMouseMove(event){
