@@ -10,7 +10,7 @@ export default class Label{
             top: -1000,
             left: -1000
         };
-        this.element.style.fontSize = '2em';
+        this.element.style.fontSize =  (Math.random() + 1) * 2 + 'em';
         this.element.className = 'label';
         this.element.innerHTML = text;
     }

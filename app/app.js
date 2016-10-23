@@ -1,20 +1,25 @@
 import THREE from 'lib';
+import Camera from 'camera';
 
 export default class App{
-    constructor(debug=true){
+    constructor(actionQueue, debug=true){
         this.width = window.innerWidth;
         this.height = window.innerHeight;
+        this.actionQueue = actionQueue;
         this.objects = [];
         this.debug = debug;
         this.mouse = new THREE.Vector2();
         this.moved = false;
+        this.override = false;
         this.init();
     }
     init(){
-        this.scene = new THREE.Scene();
+        this.scene = this.setScene();
         this.hoverScene = new THREE.Scene();
         this.labelScene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(70, this.width / this.height, 1, 1000 );
+        this.camera = new Camera();
+        this.actionQueue.addApp(this);
+        this.actionQueue.addCamera(this.camera);
         this.rayCaster = new THREE.Raycaster();
         this.camera.position.z = 500;
         this.camera.position.y = 50;
@@ -24,10 +29,6 @@ export default class App{
             document.addEventListener('keydown', (e)=> {
                 if (e.key==='s') this.controls.enabled=!this.controls.enabled;}, false)
         }
-        // //set lights
-        let light = new THREE.PointLight(0xffffff);
-        light.position.set(500,500,500);
-        this.scene.add(light);
         this.effect = this.getRenderer('defaultContainer').effect;
         this.hoverEffect = this.getRenderer('hoverContainer').effect;
         this.labelRenderer = new THREE.WebGLRenderer({alpha:true});
@@ -38,7 +39,7 @@ export default class App{
         //add listeners
         document.addEventListener('mousemove', this.onMouseMove.bind(this), false );
         document.addEventListener( 'click', this.onClick.bind(this), false);
-        this.render();
+        //this.render();
         
     }
     getRenderer(elemId){
@@ -50,6 +51,16 @@ export default class App{
         container.appendChild(effect.domElement);
         return {container, effect}
     }
+    setScene(){
+        let scene = new THREE.Scene();
+        let light = new THREE.PointLight(0xffffff);
+        let light2 = new THREE.PointLight(0xffffff);
+        light.position.set(500,500,500);
+        light2.position.set(-500,-500,-500);
+        scene.add(light);
+        scene.add(light2);
+        return scene;
+    }
     render(){
         requestAnimationFrame(()=>this.render());
         if (this.controls)
@@ -57,12 +68,12 @@ export default class App{
         this.rayCaster.setFromCamera(this.mouse,this.camera);
         let intersects = this.rayCaster.intersectObjects(this.scene.children);
         if (this.moved && intersects.length > 0 && intersects[0].object !== this.intersected ){
-            this.flushHoverScene();
-            this.intersected = this.objects.filter(obj=>intersects[0].object===obj.getMesh())[0];
-            this.hoverScene.add(this.intersected.clone());
+            this.flush();
+            this.intersected = this.objects.filter(obj=>intersects[0].object===obj)[0];
+            //this.hoverScene.add(this.intersected.clone());
         }
         else if (this.moved && !intersects.length){
-            this.flushHoverScene();
+            this.flush();
             this.intersected = undefined;
         }
         if (this.debug){
@@ -70,19 +81,23 @@ export default class App{
             let pos = this.controls.object.position;
             document.getElementById('info').innerHTML= `x:${x}, y:${y}, z:${z}, pX:${pos.x}, pY:${pos.y}, pZ:${pos.z} (tracking: ${this.controls.enabled})`;
         }
-        
         this.objects.forEach(o=>o.updateLabel(this.camera));
-        this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected);
+        if (this.intersected)
+            this.intersected.hover();
+        else if (!this.override)
+            this.hoverEffect.render(this.hoverScene, this.camera, 'black', false);
+        //this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected);
         this.effect.render(this.scene, this.camera, 'default' );
         this.labelRenderer.render(this.labelScene, this.camera);
-        
     }
-    flushHoverScene(){
-        this.hoverScene.children.forEach(child=>this.hoverScene.remove(child));
+    flush(){
+        this.hoverScene.children.forEach((child)=>this.hoverScene.remove(child));
     }
     add(obj){
+        obj.setHover(this.hoverScene, this.camera, this.hoverEffect);
         this.objects.push(obj);
-        this.scene.add(obj.mesh);
+        this.scene.add(obj);
+        this.actionQueue.addObject(obj);
         obj.updateLabel(this.camera);
         document.getElementById('labelsContainer').appendChild(obj.label.element);
         
@@ -94,13 +109,8 @@ export default class App{
     }
     onClick(event){
         if (this.intersected){
-            this.setCamera({x:-0.7676715477620297, y:0.6403577964996368, z:-0.024945613176517528, pX:385.75017812036015, pY:-321.7758130986984, pZ:12.534998395844406});    
+            this.camera.set({x:-0.7676715477620297, y:0.6403577964996368, z:-0.024945613176517528, pX:385.75017812036015, pY:-321.7758130986984, pZ:12.534998395844406});    
         }
-    }
-    setCamera(posDir){
-        let {x,y,z,pX,pY,pZ} = posDir;
-        this.camera.position.set(pX,pY,pZ);
-        this.camera.lookAt(new THREE.Vector3(x,y,z))
     }
 
 }

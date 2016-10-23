@@ -1,25 +1,36 @@
 import THREE from 'lib';
 import Label from 'label';
 
-export default class Sphere{
+export default class Sphere extends THREE.Mesh{
     constructor(size,x,y,z,labelText, hoverColor){
         let geometry = new THREE.SphereGeometry(size, 20, 10);
         let material = new THREE.MeshLambertMaterial();
-        this.mesh = new THREE.Mesh(geometry, material);
-        this.mesh.position.set(x,y,z);
+        super(geometry, material);
+        this.position.set(x,y,z);
         this.label = new Label(labelText, size);
         this.hoverColor = hoverColor;
     }
-    getMesh(){
-        return this.mesh;
-    }
     updateLabel(camera){
-        this.label.setPosition(this.mesh.position, camera);
+        this.label.setPosition(this.position, camera);
     }
     clone(){
-        let newMesh = new THREE.Mesh(this.mesh.geometry, this.mesh.material);
-        let {x,y,z} = this.mesh.position;
+        let newMesh = new THREE.Mesh(this.geometry, this.material);
+        let {x,y,z} = this.position;
         newMesh.position.set(x, y, z);
         return newMesh;
+    }
+    setHover(scene, camera, effect){
+        this.hoverScene = scene;
+        this.hoverCamera = camera;
+        this.hoverEffect = effect;
+
+    }
+    hover(){
+        if (!this.hoverScene.children.length)
+            this.hoverScene.add(this.clone());
+        this.hoverEffect.render(this.hoverScene, this.hoverCamera, this.hoverColor);
+    }
+    clear(){
+        this.hoverScene.children.forEach(child=>this.hoverScene.remove(child));
     }
 }

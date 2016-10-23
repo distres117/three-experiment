@@ -1,0 +1,31 @@
+body{
+    margin:0;
+    overflow:hidden;
+}
+#defaultContainer{
+    position:absolute;
+    z-index: 10;
+}
+#hoverContainer{
+    position:absolute;
+    z-index:1;
+}
+#labelsContainer{
+    position: relative;
+    z-index: 20;
+}
+.label{
+    color: black;
+    opacity: .75;
+    background:white;
+    font-family: 'Inconsolata', monospace;
+    position: absolute;
+}
+.infoBox{
+    position:absolute;
+    background:lightblue;
+    top: 0px;
+    left:0px;
+    width: 100%;
+    z-index: 100;
+}
