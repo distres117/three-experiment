@@ -1,15 +1,16 @@
 import THREE from 'lib';
 
 export default class Label{
-    constructor(text){
+    constructor(text, size){
         this.element = document.createElement('div');
         this.position = new THREE.Vector3(0,0,0);
         this.element.style = {
             width: 100,
             height: 100,
             top: -1000,
-            left: -1000,
+            left: -1000
         };
+        this.element.style.fontSize = '2em';
         this.element.className = 'label';
         this.element.innerHTML = text;
     }

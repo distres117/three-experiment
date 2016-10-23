@@ -1,9 +1,9 @@
 import THREE from 'lib';
 
 export default class App{
-    constructor(width,height, debug=true){
-        this.width = width;
-        this.height = height;
+    constructor(debug=true){
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
         this.objects = [];
         this.debug = debug;
         this.mouse = new THREE.Vector2();
@@ -18,8 +18,12 @@ export default class App{
         this.rayCaster = new THREE.Raycaster();
         this.camera.position.z = 500;
         this.camera.position.y = 50;
-        if (this.debug)
+        if (this.debug){
+            this.track = true;
             this.controls = new THREE.TrackballControls(this.camera);
+            document.addEventListener('keydown', (e)=> {
+                if (e.key==='s') this.controls.enabled=!this.controls.enabled;}, false)
+        }
         // //set lights
         let light = new THREE.PointLight(0xffffff);
         light.position.set(500,500,500);
@@ -33,6 +37,7 @@ export default class App{
         container.appendChild(this.labelRenderer.domElement);
         //add listeners
         document.addEventListener('mousemove', this.onMouseMove.bind(this), false );
+        document.addEventListener( 'click', this.onClick.bind(this), false);
         this.render();
         
     }
@@ -53,26 +58,27 @@ export default class App{
         let intersects = this.rayCaster.intersectObjects(this.scene.children);
         if (this.moved && intersects.length > 0 && intersects[0].object !== this.intersected ){
             this.flushHoverScene();
-            this.intersected = intersects[0].object;
-            this.hoverScene.add(this.cloneMesh(this.intersected));
+            this.intersected = this.objects.filter(obj=>intersects[0].object===obj.getMesh())[0];
+            this.hoverScene.add(this.intersected.clone());
         }
         else if (this.moved && !intersects.length){
             this.flushHoverScene();
             this.intersected = undefined;
         }
+        if (this.debug){
+            let {x,y,z} = this.controls.object.getWorldDirection();
+            let pos = this.controls.object.position;
+            document.getElementById('info').innerHTML= `x:${x}, y:${y}, z:${z}, pX:${pos.x}, pY:${pos.y}, pZ:${pos.z} (tracking: ${this.controls.enabled})`;
+        }
+        
         this.objects.forEach(o=>o.updateLabel(this.camera));
-        this.hoverEffect.render(this.hoverScene, this.camera, 'hover', !!this.intersected);
+        this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected);
         this.effect.render(this.scene, this.camera, 'default' );
         this.labelRenderer.render(this.labelScene, this.camera);
         
     }
     flushHoverScene(){
         this.hoverScene.children.forEach(child=>this.hoverScene.remove(child));
-    }
-    cloneMesh(mesh){
-        let newMesh = new THREE.Mesh(mesh.geometry, mesh.material);
-        newMesh.position.set(mesh.position.x,mesh.position.y, mesh.position.z);
-        return newMesh;
     }
     add(obj){
         this.objects.push(obj);
@@ -85,6 +91,16 @@ export default class App{
         this.moved = true;
         this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }
+    onClick(event){
+        if (this.intersected){
+            this.setCamera({x:-0.7676715477620297, y:0.6403577964996368, z:-0.024945613176517528, pX:385.75017812036015, pY:-321.7758130986984, pZ:12.534998395844406});    
+        }
+    }
+    setCamera(posDir){
+        let {x,y,z,pX,pY,pZ} = posDir;
+        this.camera.position.set(pX,pY,pZ);
+        this.camera.lookAt(new THREE.Vector3(x,y,z))
     }
 
 }

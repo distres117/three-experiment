@@ -1,15 +1,11 @@
 <!doctype html>
 <html>
     <head>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
         <style>
             body{
                 margin:0;
-            }
-            .hover{
-                color:blue;
-            },
-            .default{
-                color:black;
+                overflow:hidden;
             }
             #defaultContainer{
                 position:absolute;
@@ -26,10 +22,16 @@
             .label{
                 color: grey;
                 background:white;
-                font-size:2em;
-                font-family: 'arial';
-                font-weight:bold;
+                font-family: 'Open Sans', sans-serif;
                 position: absolute;
+            }
+            .infoBox{
+                position:absolute;
+                background:lightblue;
+                top: 0px;
+                left:0px;
+                width: 100%;
+                z-index: 100;
             }
 
         </style>
@@ -40,6 +42,7 @@
             <div id="defaultContainer"></div>
             <div id="labelsContainer"></div>
         </div>
+        <div id="info" class="infoBox"></div>
         <script src="bundle.js"></script>
     </body>
 </html>

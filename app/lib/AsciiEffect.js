@@ -205,7 +205,7 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 
 	// convert img element to ascii
 
-	function asciifyImage( canvasRenderer, oAscii, className, doRender ) {
+	function asciifyImage( canvasRenderer, oAscii, hoverColor, doRender ) {
 			
 		oCtx.clearRect( 0, 0, iWidth, iHeight );
 		oCtx.drawImage( oCanvasImg, 0, 0, iWidth, iHeight );
@@ -277,7 +277,7 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 
 			}
 		}
-		oAscii.innerHTML = "<tr class='"+className+"'><td>" + strChars + "</td></tr>";
+		oAscii.innerHTML = "<tr style='color:"+hoverColor+";'><td>" + strChars + "</td></tr>";
 
 		// console.timeEnd('rendering');
 
