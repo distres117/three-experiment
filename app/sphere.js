@@ -19,16 +19,13 @@ export default class Sphere extends THREE.Mesh{
         newMesh.position.set(x, y, z);
         return newMesh;
     }
-    setHover(scene, camera, effect){
+    setHover(scene){
         this.hoverScene = scene;
-        this.hoverCamera = camera;
-        this.hoverEffect = effect;
-
     }
     hover(){
         if (!this.hoverScene.children.length)
             this.hoverScene.add(this.clone());
-        this.hoverEffect.render(this.hoverScene, this.hoverCamera, this.hoverColor);
+        //this.hoverEffect.render(this.hoverScene, this.hoverCamera, this.hoverColor);
     }
     clear(){
         this.hoverScene.children.forEach(child=>this.hoverScene.remove(child));

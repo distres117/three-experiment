@@ -1,5 +1,6 @@
 import THREE from 'lib';
 import Camera from 'camera';
+import * as TWEEN from 'tween.js';
 
 export default class App{
     constructor(actionQueue, debug=true){
@@ -36,9 +37,6 @@ export default class App{
         this.labelRenderer.setPixelRatio(window.devicePixelRatio);
         let container = document.getElementById('labelsContainer');
         container.appendChild(this.labelRenderer.domElement);
-        //add listeners
-        document.addEventListener('mousemove', this.onMouseMove.bind(this), false );
-        document.addEventListener( 'click', this.onClick.bind(this), false);
         //this.render();
         
     }
@@ -62,6 +60,7 @@ export default class App{
         return scene;
     }
     render(){
+        TWEEN.update();
         requestAnimationFrame(()=>this.render());
         if (this.controls)
             this.controls.update();
@@ -84,9 +83,9 @@ export default class App{
         this.objects.forEach(o=>o.updateLabel(this.camera));
         if (this.intersected)
             this.intersected.hover();
-        else if (!this.override)
-            this.hoverEffect.render(this.hoverScene, this.camera, 'black', false);
-        //this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected);
+        // else if (!this.override)
+        //     this.hoverEffect.render(this.hoverScene, this.camera, 'black', false);
+        this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected || this.override);
         this.effect.render(this.scene, this.camera, 'default' );
         this.labelRenderer.render(this.labelScene, this.camera);
     }
@@ -94,7 +93,7 @@ export default class App{
         this.hoverScene.children.forEach((child)=>this.hoverScene.remove(child));
     }
     add(obj){
-        obj.setHover(this.hoverScene, this.camera, this.hoverEffect);
+        obj.setHover(this.hoverScene);
         this.objects.push(obj);
         this.scene.add(obj);
         this.actionQueue.addObject(obj);
@@ -109,8 +108,13 @@ export default class App{
     }
     onClick(event){
         if (this.intersected){
-            this.camera.set({x:-0.7676715477620297, y:0.6403577964996368, z:-0.024945613176517528, pX:385.75017812036015, pY:-321.7758130986984, pZ:12.534998395844406});    
+              
         }
+    }
+    attachListeners(){
+         //add listeners
+        document.addEventListener('mousemove', this.onMouseMove.bind(this), false );
+        document.addEventListener( 'click', this.onClick.bind(this), false);
     }
 
 }

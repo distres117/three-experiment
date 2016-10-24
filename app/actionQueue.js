@@ -1,6 +1,3 @@
-import THREE from 'lib';
-import * as TWEEN from 'tween.js';
-
 export default class ActionQueue{
     constructor(){
         this.queue = [];
@@ -19,10 +16,13 @@ export default class ActionQueue{
         this.app = app;
     }
     next(){
-        if (this.queue.length){
-            let action = this.queue.pop();
-            if (action.type==='object')
-                action.fn(this.app, this.objects, this.next.bind(this));
+        if (this.queue.length > 0){
+            console.log(this.queue.length);
+            let action = this.queue.shift();
+            action(this.app, this.objects, this.camera, this.next.bind(this));
+        }else{
+            console.log('queue empty');
+            this.app.attachListeners();
         }
     }
 }
