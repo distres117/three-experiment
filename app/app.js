@@ -22,9 +22,11 @@ export default class App{
         this.actionQueue.addApp(this);
         this.actionQueue.addCamera(this.camera);
         this.rayCaster = new THREE.Raycaster();
-        this.camera.position.z = 500;
-        this.camera.position.y = 50;
         if (this.debug){
+            let axes = new THREE.AxisHelper(50,0x0000ff, 0x808080);
+            let helper = new THREE.GridHelper(1000, 10);
+            this.labelScene.add(axes);
+            this.labelScene.add(helper);
             this.track = true;
             this.controls = new THREE.TrackballControls(this.camera);
             document.addEventListener('keydown', (e)=> {
