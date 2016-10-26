@@ -12,6 +12,7 @@ export default class App{
         this.mouse = new THREE.Vector2();
         this.moved = false;
         this.override = false;
+        this.opacity = 1;
         this.init();
     }
     init(){
@@ -88,7 +89,7 @@ export default class App{
         // else if (!this.override)
         //     this.hoverEffect.render(this.hoverScene, this.camera, 'black', false);
         this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected || this.override);
-        this.effect.render(this.scene, this.camera, 'default' );
+        this.effect.render(this.scene, this.camera, 'black', true, this.opacity);
         this.labelRenderer.render(this.labelScene, this.camera);
     }
     flush(){

@@ -30,4 +30,11 @@ export default class Sphere extends THREE.Mesh{
     clear(){
         this.hoverScene.children.forEach(child=>this.hoverScene.remove(child));
     }
+    getPosition(){
+        return {
+            x:this.position.x,
+            y:this.position.y,
+            z:this.position.z
+        };
+    }
 }

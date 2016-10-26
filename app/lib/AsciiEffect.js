@@ -60,10 +60,10 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 		context.clear();
 	}
 
-	this.render = function ( scene, camera, className, doRender = true) {
+	this.render = function ( scene, camera, className, doRender = true, opacity=100) {
 		if (doRender)
 			renderer.render( scene, camera );
-		asciifyImage( renderer, oAscii, className, doRender );
+		asciifyImage( renderer, oAscii, className, doRender, opacity );
 
 	};
 
@@ -205,7 +205,7 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 
 	// convert img element to ascii
 
-	function asciifyImage( canvasRenderer, oAscii, hoverColor, doRender ) {
+	function asciifyImage( canvasRenderer, oAscii, hoverColor, doRender, opacity ) {
 			
 		oCtx.clearRect( 0, 0, iWidth, iHeight );
 		oCtx.drawImage( oCanvasImg, 0, 0, iWidth, iHeight );
@@ -277,7 +277,7 @@ THREE.AsciiEffect = function ( renderer, charSet, options) {
 
 			}
 		}
-		oAscii.innerHTML = "<tr style='color:"+hoverColor+";'><td>" + strChars + "</td></tr>";
+		oAscii.innerHTML = `<tr style='color:${hoverColor};opacity:${opacity};'><td>${strChars}</td></tr>`;
 
 		// console.timeEnd('rendering');
 
