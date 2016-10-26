@@ -1,18 +1,17 @@
 
 
 export default class GroupTween{
-    constructor(tweens, onComplete){
+    constructor(tweens){
         this.tweens = tweens;
-        this.complete = onComplete;
         this.running = tweens.length;
     }
-    start(){
+    start(onComplete){
         while(this.tweens.length){
             let tween = this.tweens.shift();
             tween.onComplete(()=>{
                 this.running--;
                 if (!this.running){
-                    this.complete();
+                    onComplete();
                 }
             });
             tween.start();
