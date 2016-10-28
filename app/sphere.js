@@ -1,5 +1,6 @@
 import THREE from 'lib';
 import Label from 'label';
+import $ from 'jquery';
 
 export default class Sphere extends THREE.Mesh{
     constructor(size,x,y,z,labelText, hoverColor){
@@ -36,5 +37,10 @@ export default class Sphere extends THREE.Mesh{
             y:this.position.y,
             z:this.position.z
         };
+    }
+    changeText(newText){
+        let elem = $(this.label.element);
+        elem.fadeOut('slow', ()=>elem.html(newText));
+        elem.fadeIn('slow');
     }
 }

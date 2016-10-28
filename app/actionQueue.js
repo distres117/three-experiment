@@ -22,7 +22,7 @@ export default class ActionQueue{
             action(this.app, this.objects, this.camera, this.next.bind(this));
         }else{
             console.log('queue empty');
-            this.app.attachListeners();
+            //this.app.attachListeners();
         }
     }
 }

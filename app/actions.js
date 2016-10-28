@@ -1,11 +1,10 @@
 import ActionQueue from 'actionQueue';
 import * as TWEEN from 'tween.js';
-import $ from 'jquery';
 import THREE from 'lib';
 import GroupTween from 'lib/GroupTween';
 
-function makeTween(from, to, duration, onUpdate, onComplete){
-    let tween = new TWEEN.Tween(from).to(to, duration).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(onUpdate);
+function makeTween(from, to, duration, onUpdate, easing = TWEEN.Easing.Sinusoidal.InOut, onComplete){
+    let tween = new TWEEN.Tween(from).to(to, duration).easing(easing).onUpdate(onUpdate);
     if (onComplete)
         tween.onComplete(onComplete);
     return tween;
@@ -44,39 +43,27 @@ export default () => {
             {x:-270,y:-150,z:0}
         ];
         let cameraState = camera.getPosition();
+        let cameraTo = {pX:-35.47057399020848, pY:-463.5420302612777, pZ:168.33810378414358, rX:1.2241342464734717, rY:-0.021618349507295975, rZ:-0.04417979255883771};
         let opacityState = {v:0};
         let objectTweens = ends.map((end,i)=>makeTween(states[i], ends[i], 800, ()=>objects[i].position.set(states[i].x,states[i].y,states[i].z)));
-        let cameraTween = makeTween(cameraState, 
-        {
-            x:0.0015092980750329894, 
-            y:0.8403262631527222, 
-            z:-0.542078841836944, 
-            pX:-0.6037183036804029, 
-            pY:-400.1305069650319,
-             pZ:216.8315424739669
-        },1000, ()=>camera.set(cameraState));
+        let cameraTween = makeTween(cameraState, cameraTo,1500, ()=>camera.set(cameraState));
         let opacityTween = makeTween(opacityState, {v:1}, 800, ()=>app.opacity=opacityState.v);
         //make the tweens
         let t = new GroupTween([...objectTweens, cameraTween, opacityTween]);
-        t.start(()=>next());
-        //let o = makeTween(s2,{v:1},200,()=>app.opacity=s2.v);
+        t.start(()=>{
+            app.attachListeners();
+            next()
+        });
+        let newText = ['skills', 'projects', 'experience', 'education', 'contact', 'credits'];
+        objects.forEach((o,i)=>o.changeText(newText[i]));
         
     });
+    actions.addEvent((app, objects, camera, next)=>{
+        let cameraState = camera.getPosition();
+        let cameraTo = {pX:-372.23708483158487, pY:-336.31056223672164, pZ:108.37958123974735, rX:1.1781445910500097, rY:-0.731066029494897, rZ:-0.18991356402826853};
+        makeTween(cameraState, cameraTo, 10000, ()=>camera.set(cameraState)).repeat(2).yoyo(true).start();
+    });
 
-    //camera move step
-    // actions.addEvent((app, objects, camera, next) => {
-    //     let from = {
-    //         x: camera.position.x,
-    //         y: camera.position.y,
-    //         z: camera.position.z
-    //     };
-    //     let to = {
-    //         x: 385.75017812036015,
-    //         y: -321.7758130986984,
-    //         z: 12.534998395844406
-    //     };
-    //     makeTween(from,to,1000,()=>camera.position.set(from.x,from.y,from.z), ()=>next()).start();
-    // });
     return actions;
 
 }

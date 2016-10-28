@@ -1,2 +1,2 @@
-import THREE from './OrbitControls';
+import THREE from './FlyControls';
 export default THREE;

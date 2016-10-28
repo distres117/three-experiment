@@ -24,14 +24,21 @@ export default class App{
         this.actionQueue.addCamera(this.camera);
         this.rayCaster = new THREE.Raycaster();
         if (this.debug){
+            this.clock = new THREE.Clock();
             let axes = new THREE.AxisHelper(50,0x0000ff, 0x808080);
             let helper = new THREE.GridHelper(1000, 10);
             this.labelScene.add(axes);
             this.labelScene.add(helper);
             this.track = true;
-            this.controls = new THREE.TrackballControls(this.camera);
+            this.controls = new THREE.FlyControls(this.camera);
+            this.controls.movementSpeed = 200;
+            this.controls.domElement = document.getElementById('defaultContainer');
+            this.controls.rollSpeed = Math.PI / 24;
+            this.controls.autoForward = false;
+            this.controls.dragToLook = false;
+            console.log(this.controls);
             document.addEventListener('keydown', (e)=> {
-                if (e.key==='s') this.controls.enabled=!this.controls.enabled;}, false)
+                if (e.key==='l') this.controls.enabled=!this.controls.enabled;}, false)
         }
         this.effect = this.getRenderer('defaultContainer').effect;
         this.hoverEffect = this.getRenderer('hoverContainer').effect;
@@ -65,8 +72,9 @@ export default class App{
     render(){
         TWEEN.update();
         requestAnimationFrame(()=>this.render());
-        if (this.controls)
-            this.controls.update();
+        if (this.controls){
+            this.controls.update(this.clock.getDelta());
+        }
         this.rayCaster.setFromCamera(this.mouse,this.camera);
         let intersects = this.rayCaster.intersectObjects(this.scene.children);
         if (this.moved && intersects.length > 0 && intersects[0].object !== this.intersected ){
@@ -79,16 +87,17 @@ export default class App{
             this.intersected = undefined;
         }
         if (this.debug){
-            let {x,y,z} = this.controls.object.getWorldDirection();
+            //let {x,y,z} = this.controls.object.getWorldDirection();
             let pos = this.controls.object.position;
-            document.getElementById('info').innerHTML= `x:${x}, y:${y}, z:${z}, pX:${pos.x}, pY:${pos.y}, pZ:${pos.z} (tracking: ${this.controls.enabled})`;
+            let rot = this.controls.object.rotation;
+            document.getElementById('info').innerHTML= `pX:${pos.x}, pY:${pos.y}, pZ:${pos.z}, rX:${rot.x}, rY:${rot.y}, rZ:${rot.z} (tracking: ${this.controls.enabled})`;
         }
         this.objects.forEach(o=>o.updateLabel(this.camera));
         if (this.intersected)
             this.intersected.hover();
         // else if (!this.override)
         //     this.hoverEffect.render(this.hoverScene, this.camera, 'black', false);
-        this.hoverEffect.render(this.hoverScene, this.camera, this.intersected ? this.intersected.hoverColor : 'black', !!this.intersected || this.override);
+        this.hoverEffect.render(this.hoverScene, this.camera, 'black', !!this.intersected || this.override);
         this.effect.render(this.scene, this.camera, 'black', true, this.opacity);
         this.labelRenderer.render(this.labelScene, this.camera);
     }

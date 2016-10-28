@@ -7,19 +7,21 @@ export default class Camera extends THREE.PerspectiveCamera{
         //this.up.set(new THREE.Vector3(0,1,0));
     }
     set(posDir){
-        let {x,y,z,pX,pY,pZ} = posDir;
+        let {pX,pY,pZ,rX,rY,rZ} = posDir;
         this.position.set(pX,pY,pZ);
-        this.lookAt(new THREE.Vector3(x,y,z))
+        //this.lookAt(new THREE.Vector3(x,y,z));
+        this.rotation.x = rX;
+        this.rotation.y = rY;
+        this.rotation.z = rZ;
     }
     getPosition(){
-        let dir= this.getWorldDirection();
         return {
             pX:this.position.x,
             pY:this.position.y,
             pZ:this.position.z,
-            x:dir.x,
-            y:dir.y,
-            z:dir.z
+            rX:this.rotation.x,
+            rY:this.rotation.y,
+            rZ:this.rotation.z
         }
     };
 
