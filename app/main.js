@@ -3,7 +3,7 @@ import Sphere from 'sphere';
 import getActions from 'actions';
 
 let actions = getActions();
-let app = new App(actions, false);
+let app = new App(actions);
 app.add(new Sphere(65, -150,125,0, 'oliver', 'red'));
 app.add(new Sphere(75, -50, 50,-25, 'mcrobbie', 'blue'));
 app.add(new Sphere(90, 75, 150, 25, 'software', 'purple'));

@@ -38,9 +38,17 @@ export default class Sphere extends THREE.Mesh{
             z:this.position.z
         };
     }
-    changeText(newText){
+    changeText(newText, keep){
+        if (keep)
+            this.oldText = this.label.element.innerHTML;
         let elem = $(this.label.element);
         elem.fadeOut('slow', ()=>elem.html(newText));
         elem.fadeIn('slow');
+    }
+    revertText(){
+        if (this.oldText){
+            this.changeText(this.oldText);
+        }
+        
     }
 }

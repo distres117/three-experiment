@@ -119,9 +119,15 @@ export default class App{
         this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     }
     onClick(event){
-        if (this.intersected){
-              
+        if (!this.debug || this.controls.enabled){
+            if (this.intersected)
+                this.intersected.onClick();
+            else{
+                this.goHome();
+            }
         }
+        
+            
     }
     attachListeners(){
          //add listeners
