@@ -120,8 +120,10 @@ export default class App{
     }
     onClick(event){
         if (!this.debug || this.controls.enabled){
-            if (this.intersected)
+            if (this.intersected){
+                TWEEN.removeAll();
                 this.intersected.onClick();
+            }  
             else{
                 this.goHome();
             }

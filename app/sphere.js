@@ -47,7 +47,7 @@ export default class Sphere extends THREE.Mesh{
     }
     revertText(){
         if (this.oldText){
-            this.changeText(this.oldText);
+            this.label.element.innerHTML = this.oldText;
         }
         
     }

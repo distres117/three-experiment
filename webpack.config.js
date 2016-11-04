@@ -29,7 +29,7 @@ module.exports = {
             'node_modules',
             './app'
         ],
-        extensions:['','.js']
+        extensions:['','.js', '.jsx']
     },
     module:{
         loaders: [
