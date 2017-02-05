@@ -38,17 +38,30 @@ export default class Sphere extends THREE.Mesh{
             z:this.position.z
         };
     }
-    changeText(newText, keep){
+    changeText(newText, keep, size){
         if (keep)
-            this.oldText = this.label.element.innerHTML;
+            this.oldText ={
+                text:this.label.element.innerHTML, 
+                size:this.label.element.style.fontSize
+            };
         let elem = $(this.label.element);
-        elem.fadeOut('slow', ()=>elem.html(newText));
+        elem.fadeOut('slow', ()=>{
+            this.label.element.style.fontSize = size + 'em';
+            elem.html(newText);
+        });
         elem.fadeIn('slow');
     }
     revertText(){
         if (this.oldText){
-            this.label.element.innerHTML = this.oldText;
+            this.label.element.innerHTML = this.oldText.text;
+            this.label.element.style.fontSize = this.oldText.size;
         }
         
+    }
+    fadeOut(){
+        $(this.label.element).fadeOut('slow');
+    }
+    fadeIn(){
+        $(this.label.element).fadeIn('slow');
     }
 }

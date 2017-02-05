@@ -41,9 +41,9 @@ export default () => {
         let template = `
                         <div>
                             <ul>
-                                <li>Screw you</li>
-                                <li>Fuck off</li>
-                                <li>You suck</li>
+                                <li>JavaScript: React/Redux, Angular, Node, Express</li>
+                                <li>Database: SQL, MongoDB </li>
+                                <li>Other: Python, C#</li>
                             </ul>
                         </div>`;
         //define the target states
@@ -61,7 +61,9 @@ export default () => {
                 objects.forEach(o=>o.revertText());
                 let cameraState = camera.getPosition();
 
-                makeTween(cameraState, cameraTos[i], 2000, ()=>camera.set(cameraState), undefined, ()=>o.changeText(template, true)).start();
+                makeTween(cameraState, cameraTos[i], 2000, ()=>camera.set(cameraState), undefined, ()=>{
+                    o.changeText(template, true,2);
+                }).start();
             };
         });
         app.goHome = ()=>{
