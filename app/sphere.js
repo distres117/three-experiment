@@ -3,13 +3,14 @@ import Label from 'label';
 import $ from 'jquery';
 
 export default class Sphere extends THREE.Mesh{
-    constructor(size,x,y,z,labelText, hoverColor){
+    constructor(size,x,y,z,labelText, hoverColor, tag){
         let geometry = new THREE.SphereGeometry(size, 20, 10);
         let material = new THREE.MeshLambertMaterial();
         super(geometry, material);
         this.position.set(x,y,z);
         this.label = new Label(labelText, size);
         this.hoverColor = hoverColor;
+        this.tag = tag;
     }
     updateLabel(camera){
         this.label.setPosition(this.position, camera);
